@@ -1,0 +1,18 @@
+{
+    "name": "UISystem",
+    "rootNamespace": "Isar.UI",
+    "references": [
+        "GUID:523aed39dc8397841a28ad1e985f168d",
+        "GUID:3a1c1cff30b414a4aaa0bea8e6054dbd",
+        "GUID:9385b4a4f22e13849bff18e9e9d5430e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

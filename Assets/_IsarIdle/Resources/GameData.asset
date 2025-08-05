@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42210b2d65eb6db45b7a75998a125b69, type: 3}
+  m_Name: GameData
+  m_EditorClassIdentifier: 
+  highScore: 0
+  totalExperienceEarned:
+    mantissa: 4.5
+    exponent: 1
+  experienceNeeded:
+    functionType: 1
+    baseValue: 1
+    multiplier: 1
+    exponent: 2
+    previewLength: 10
+    previewValues: []
+  statPointsAvailable: 66
+  statUpgrades:
+  - upgradableStat: 0
+    currentLevel: 0
+  - upgradableStat: 1
+    currentLevel: 0
+  - upgradableStat: 2
+    currentLevel: 0
+  - upgradableStat: 3
+    currentLevel: 0
+  - upgradableStat: 4
+    currentLevel: 0
+  maxStatUpgradeLevel: 30

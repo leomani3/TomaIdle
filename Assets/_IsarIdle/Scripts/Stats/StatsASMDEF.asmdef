@@ -1,0 +1,16 @@
+{
+    "name": "StatsASMDEF",
+    "rootNamespace": "",
+    "references": [
+        "GUID:045be399454008948808a47e4f54f6d8"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,18 @@
+{
+    "name": "EditorUtils",
+    "rootNamespace": "Isar.Editor",
+    "references": [
+        "GUID:3a1c1cff30b414a4aaa0bea8e6054dbd"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

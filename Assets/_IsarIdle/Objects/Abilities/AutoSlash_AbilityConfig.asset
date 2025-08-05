@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14adeb14871b9354b8ed0bc9da6d6ede, type: 3}
+  m_Name: AutoSlash_AbilityConfig
+  m_EditorClassIdentifier: 
+  fxPoolRef: {fileID: 11400000, guid: 60aae960f0d936e4697ecd587381c51f, type: 2}
+  hitBoxRadius: 1.5
+  range: 2.5
+  castType: 0
+  nbTick: 0
+  duration: 1
+  effects:
+  - rid: 7119669407815303264
+  projectilePoolRef: {fileID: 0}
+  manaCost: 0
+  targetAcuisitionType: 0
+  cooldown: 1
+  icon: {fileID: 21300000, guid: 1c90345a014cb424fb774fd54af9d122, type: 3}
+  references:
+    version: 2
+    RefIds:
+    - rid: 7119669407815303264
+      type: {class: DamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        baseDamage: 10

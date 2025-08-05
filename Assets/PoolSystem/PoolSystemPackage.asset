@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bfc179708001a74cacf15f6fcd5a661, type: 3}
+  m_Name: PoolSystemPackage
+  m_EditorClassIdentifier: 
+  descriptor:
+    packageId: pinpin.package.poolSystem
+    packageName: Pool System
+    packageDescription: 
+    version: 1.2
+    documentationUrl: 
+    url: https://api.bitbucket.org/2.0/repositories/pinpinteam/pinpin-package-manager/src/rework/PoolSystem.unitypackage
+    approved: 0
+    imageName: 
+    initial: 
+    minTemplateVersion: 1.2.32
+    tags:
+    - Pool
+    packageDependencies: []
+    scopedRegistries: []
+    unityPackageDependencies: []
+    packageExcluded: []
+    customDefineSymbols: []
+    texture: {fileID: 2800000, guid: 6472723fae2131942a4d0ba6db02a857, type: 3}
+    packageFunctionExecutions: []

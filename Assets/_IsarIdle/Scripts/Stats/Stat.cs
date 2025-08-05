@@ -15,22 +15,16 @@ public class Stat : AStat<float>
 		return BaseValue;
 	}
 
-	public Stat(float baseValue, bool useCache = true) : base(useCache)
+	public Stat(float baseValue) : base()
 	{
 		BaseValue = baseValue;
 	}
-
-	public Stat(float baseValue, float cacheUpdateInterval) : base(cacheUpdateInterval)
-	{
-		BaseValue = baseValue;
-	}
-
+	
 	public void SetBaseValue(float baseValue)
 	{
 		if (baseValue != BaseValue)
 		{
 			BaseValue = baseValue;
-			dirtyCache = true;
 		}
 	}
 

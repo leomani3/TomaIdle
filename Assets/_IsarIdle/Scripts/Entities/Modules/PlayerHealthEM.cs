@@ -1,3 +1,4 @@
+using System;
 using BreakInfinity;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -21,11 +22,28 @@ public class PlayerHealthEM : HealthEM
         if (m_currentHealthFloatVariable != null)
             m_currentHealthFloatVariable.Value = m_currentHealth;
     }
-
-    [Button]
+    
     public void AddMaxHealth()
     {
         m_linkedEntity.GetModule<StatsEM>().MaxHealth.AddFlat(new BigDouble(10, 0));
+    }
+    
+    public void testtakedamage()
+    {
+        m_linkedEntity.GetModule<HealthEM>().TakeDamage(10);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            AddMaxHealth();
+        }
+        
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            testtakedamage();
+        }
     }
 
     public override void Heal(BigDouble amount)

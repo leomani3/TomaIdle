@@ -15,22 +15,16 @@ public class BigStat : AStat<BigDouble>
 		return BaseValue;
 	}
 
-	public BigStat(BigDouble baseValue, bool useCache = true) : base(useCache)
+	public BigStat(BigDouble baseValue) : base()
 	{
 		BaseValue = baseValue;
 	}
-
-	public BigStat(BigDouble baseValue, float cacheUpdateInterval) : base(cacheUpdateInterval)
-	{
-		BaseValue = baseValue;
-	}
-
+	
 	public void SetBaseValue(BigDouble baseValue)
 	{
 		if (baseValue != BaseValue)
 		{
 			BaseValue = baseValue;
-			dirtyCache = true;
 		}
 	}
 

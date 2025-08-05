@@ -7,7 +7,7 @@ public static class StatTest
 	[MenuItem("Isar/Tests/Stat Test - Float")]
 	public static void FloatTest()
 	{
-		Stat testStat = new Stat(10f, false);
+		Stat testStat = new Stat(10f);
 
 		AssertValue(testStat.Value, 10f, "Initial value");
 		StatModifier<float> addModifier = new StatModifier<float>(10f, ModifierType.Flat);
@@ -53,7 +53,7 @@ public static class StatTest
 	[MenuItem("Isar/Tests/Stat Test - BigDouble")]
 	public static void BigDoubleTest()
 	{
-		BigStat testStat = new BigStat(10d, false);
+		BigStat testStat = new BigStat(10d);
 
 		AssertValue(testStat.Value, 10d, "Initial value");
 		StatModifier<BigDouble> addModifier = new StatModifier<BigDouble>(10d, ModifierType.Flat);

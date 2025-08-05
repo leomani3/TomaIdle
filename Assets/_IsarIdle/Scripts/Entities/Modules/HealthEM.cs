@@ -128,11 +128,18 @@ public class HealthEM : AEntityModule
 
     protected virtual void OnMaxHealthChanged(BigDouble prevMaxHealth, BigDouble newMaxHealth)
     {
-        if (newMaxHealth > prevMaxHealth && !IsDead)
-            Heal(newMaxHealth - prevMaxHealth);
-        else if (newMaxHealth < prevMaxHealth)
-            m_currentHealth = BigDouble.Max(m_currentHealth, newMaxHealth);
-        
+        if (prevMaxHealth > BigDouble.Zero && !IsDead)
+        {
+            BigDouble healthPercent = m_currentHealth / prevMaxHealth;
+            m_currentHealth = newMaxHealth * healthPercent;
+            m_currentHealth = BigDouble.Min(m_currentHealth, newMaxHealth);
+        }
+        else if (!IsDead)
+        {
+            m_currentHealth = newMaxHealth;
+        }
+
         OnHealthChanged?.Invoke(m_currentHealth, newMaxHealth);
     }
+
 }

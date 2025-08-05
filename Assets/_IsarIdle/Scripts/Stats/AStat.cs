@@ -1,83 +1,48 @@
-using BreakInfinity;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class AStat<T> where T: IComparable<T>, IEquatable<T>
+public abstract class AStat<T> where T : IComparable<T>, IEquatable<T>
 {
-	//Static properties
+	// Static properties
 	public static int FlatDefaultOrder = 100;
 	public static int PercentDefaultOrder = 200;
 
-	//Public properties
-	[field: SerializeField]
-	public bool UseCache { get; protected set; } = true;
-	[field: SerializeField]
-	public float CacheUpdateInterval { get; protected set; } = 0.1f;
+	// Public events
 	public Action<T, T> OnValueChanged;
 
-	//Protected properties
+	// Protected properties
 	protected Dictionary<StatModifier<T>, int> modifiers = new Dictionary<StatModifier<T>, int>();
 	protected List<OrderedValue> orderedValues = new List<OrderedValue>();
-	protected Dictionary<int, OrderedValue> orderedValuesDict = new Dictionary<int, OrderedValue>();//For fast access to ordered values by order
+	protected Dictionary<int, OrderedValue> orderedValuesDict = new Dictionary<int, OrderedValue>();
 	protected Dictionary<int, StatModifier<T>> localModifiers = new Dictionary<int, StatModifier<T>>();
 
-	protected T cachedValue = default;
-	protected bool dirtyCache = true;
-	protected float lastCacheUpdateTime = -1f;
-
-	//Value Getter
+	// Value Getter – now computes on demand
 	public T Value
 	{
 		get
 		{
-			UpdateCache();
-			return cachedValue;
-		}
-	}
-
-	public AStat(bool useCache = true)
-	{
-		UseCache = useCache;
-	}
-
-	public AStat(float cacheUpdateInterval)
-	{
-		UseCache = true;
-		CacheUpdateInterval = cacheUpdateInterval;
-	}
-
-	public abstract T GetBaseValue();
-
-	public virtual void UpdateCache(bool force = false)
-	{
-		if (dirtyCache && (!UseCache || force || Time.unscaledTime - lastCacheUpdateTime > CacheUpdateInterval))
-		{
-			T prevValue = cachedValue;
-			cachedValue = GetBaseValue();
-
-			OrderedValue orderedValue;
-			for (int i = 0; i < orderedValues.Count; i++)
+			T value = GetBaseValue();
+			foreach (var orderedValue in orderedValues)
 			{
-				orderedValue = orderedValues[i];
 				if (orderedValue.Type == ModifierType.Flat)
 				{
-					Add(ref cachedValue, orderedValue.Value);
+					Add(ref value, orderedValue.Value);
 				}
 				else if (orderedValue.Type == ModifierType.Percent)
 				{
-					Mult(ref cachedValue, orderedValue.Value);
+					Mult(ref value, orderedValue.Value);
 				}
 			}
-			lastCacheUpdateTime = Time.unscaledTime;
-			dirtyCache = false;
-			if (!Equal(cachedValue, prevValue))
-			{
-				OnValueChanged?.Invoke(prevValue, cachedValue);
-			}
+			return value;
 		}
 	}
 
+	// Constructors
+	public AStat() { }
+
+	// Abstract methods to implement
+	public abstract T GetBaseValue();
 	protected abstract void Add(ref T a, T b);
 	protected abstract T Add(T a, T b);
 	protected abstract void Mult(ref T a, T b);
@@ -88,78 +53,54 @@ public abstract class AStat<T> where T: IComparable<T>, IEquatable<T>
 	protected abstract T FromNumber(double value);
 	protected abstract T FromNumber(int value);
 
-	public virtual void ClearCache()
-	{
-		lastCacheUpdateTime = -1f - CacheUpdateInterval;
-	}
-
-	public virtual void AddFlat(T value)
-	{
-		AddFlat(value, FlatDefaultOrder);
-	}
-
+	// Modifier APIs
+	public virtual void AddFlat(T value) => AddFlat(value, FlatDefaultOrder);
 	public virtual void AddFlat(T value, int order)
 	{
-		if (localModifiers.TryGetValue(order, out StatModifier<T> existingModifier))
+		if (localModifiers.TryGetValue(order, out var existingModifier))
 		{
 			if (existingModifier.Type != ModifierType.Flat)
-			{
 				throw new Exception($"Cannot add flat modifier with order {order} because it already has a {existingModifier.Type} modifier.");
-			}
 			existingModifier.UpdateValue(Add(existingModifier.CurrentValue, value));
 		}
 		else
 		{
-			StatModifier<T> newLocalModifier = new StatModifier<T>(value, ModifierType.Flat, order);
-			localModifiers.Add(order, newLocalModifier);
-			AddModifier(localModifiers[order]);
+			var newModifier = new StatModifier<T>(value, ModifierType.Flat, order);
+			localModifiers.Add(order, newModifier);
+			AddModifier(newModifier);
 		}
 	}
 
-	public virtual void AddPercent(T value)
-	{
-		AddPercent(value, PercentDefaultOrder);
-	}
-
+	public virtual void AddPercent(T value) => AddPercent(value, PercentDefaultOrder);
 	public virtual void AddPercent(T value, int order)
 	{
-		if (localModifiers.TryGetValue(order, out StatModifier<T> existingModifier))
+		if (localModifiers.TryGetValue(order, out var existingModifier))
 		{
 			if (existingModifier.Type != ModifierType.Percent)
-			{
 				throw new Exception($"Cannot add percent modifier with order {order} because it already has a {existingModifier.Type} modifier.");
-			}
 			existingModifier.UpdateValue(Add(existingModifier.CurrentValue, value));
 		}
 		else
 		{
-			StatModifier<T> newLocalModifier = new StatModifier<T>(value, ModifierType.Percent, order);
-			localModifiers.Add(order, newLocalModifier);
-			AddModifier(localModifiers[order]);
+			var newModifier = new StatModifier<T>(value, ModifierType.Percent, order);
+			localModifiers.Add(order, newModifier);
+			AddModifier(newModifier);
 		}
 	}
 
 	public virtual void AddModifier(StatModifier<T> modifier)
 	{
- 		if (!modifiers.TryAdd(modifier, 1))
-			modifiers[modifier]++;//Same stat can be added multiple times
+		if (!modifiers.TryAdd(modifier, 1))
+			modifiers[modifier]++;
 		modifier.OnValueChange += OnModifierValueChange;
 
-		OrderedValue orderedValue;
-		if (!orderedValuesDict.ContainsKey(modifier.Order))
+		if (!orderedValuesDict.TryGetValue(modifier.Order, out var orderedValue))
 		{
 			orderedValue = new OrderedValue(modifier.Order, modifier.Type, this);
 			orderedValuesDict.Add(modifier.Order, orderedValue);
-
 			orderedValues.Add(orderedValue);
-			orderedValue.RegisteredModifiersCount = 1;
 		}
-		else
-		{
-			orderedValue = orderedValuesDict[modifier.Order];
-			orderedValue.RegisteredModifiersCount++;
-		}
-
+		orderedValue.RegisteredModifiersCount++;
 		OnModifierValueChange(modifier, default, modifier.CurrentValue);
 	}
 
@@ -168,17 +109,14 @@ public abstract class AStat<T> where T: IComparable<T>, IEquatable<T>
 		if (modifiers.TryGetValue(modifier, out int count))
 		{
 			modifier.OnValueChange -= OnModifierValueChange;
-
 			OnModifierValueChange(modifier, modifier.CurrentValue, default);
+
 			if (count == 1)
-			{
 				modifiers.Remove(modifier);
-			}
 			else
-			{
 				modifiers[modifier]--;
-			}
-			if (orderedValuesDict.TryGetValue(modifier.Order, out OrderedValue orderedValue))
+
+			if (orderedValuesDict.TryGetValue(modifier.Order, out var orderedValue))
 			{
 				orderedValue.RegisteredModifiersCount--;
 				if (orderedValue.RegisteredModifiersCount == 0)
@@ -187,23 +125,19 @@ public abstract class AStat<T> where T: IComparable<T>, IEquatable<T>
 					orderedValuesDict.Remove(modifier.Order);
 				}
 			}
-			else
-			{
-				throw new Exception($"Modifier not found in ordered values with order {modifier.Order}");
-			}
+			else throw new Exception($"Modifier not found in ordered values with order {modifier.Order}");
 		}
 	}
 
 	public virtual void ClearModifiers()
 	{
-		foreach (var modifier in modifiers)
+		foreach (var kvp in modifiers)
 		{
-			if (modifier.Key == null)
-				continue;
-			for (int i = 0; i < modifier.Value; i++)
+			var modifier = kvp.Key;
+			for (int i = 0; i < kvp.Value; i++)
 			{
-				modifier.Key.OnValueChange -= OnModifierValueChange;
-				OnModifierValueChange(modifier.Key, modifier.Key.CurrentValue, default);
+				modifier.OnValueChange -= OnModifierValueChange;
+				OnModifierValueChange(modifier, modifier.CurrentValue, default);
 			}
 		}
 		modifiers.Clear();
@@ -211,15 +145,14 @@ public abstract class AStat<T> where T: IComparable<T>, IEquatable<T>
 		orderedValuesDict.Clear();
 	}
 
-	protected virtual void OnModifierValueChange(StatModifier<T> modifier, T prevValue, T newValue)
+	protected virtual void OnModifierValueChange(StatModifier<T> modifier, T prevModifierValue, T newModifierValue)
 	{
-		if (orderedValuesDict.TryGetValue(modifier.Order, out OrderedValue orderedValue))
+		if (orderedValuesDict.TryGetValue(modifier.Order, out var orderedValue))
 		{
-			Substract(ref orderedValue.Value, prevValue);
-			Add(ref orderedValue.Value, newValue);
-			
-			OnValueChanged?.Invoke(prevValue, newValue);
-			dirtyCache = true;
+			T _prevValue = Value;
+			Substract(ref orderedValue.Value, prevModifierValue);
+			Add(ref orderedValue.Value, newModifierValue);
+			OnValueChanged?.Invoke(_prevValue, Value);
 		}
 		else
 		{
@@ -227,6 +160,7 @@ public abstract class AStat<T> where T: IComparable<T>, IEquatable<T>
 		}
 	}
 
+	// Internal container for values grouped by order/type
 	protected class OrderedValue
 	{
 		public T Value;
